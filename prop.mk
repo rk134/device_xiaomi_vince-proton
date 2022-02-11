@@ -137,12 +137,14 @@ persist.debug.coresight.config=stm-events
 
 # Display
 PRODUCT_PROPERTY_OVERRIDES += \
+debug.hwui.renderer=skiagl \
+debug.renderengine.backend=skiaglthreaded \
+renderthread.skia.reduceopstasksplitting=true \
 debug.composition.type=c2d \
 debug.cpurend.vsync=false \
 debug.egl.hw=1 \
 debug.enable.sglscale=1 \
 debug.gralloc.enable_fb_ubwc=1 \
-debug.hwui.renderer=skiagl \
 debug.hwui.use_buffer_age=false \
 debug.mdpcomp.idletime=600 \
 debug.mdpcomp.logs=0 \
