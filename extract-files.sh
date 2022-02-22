@@ -32,9 +32,9 @@ VENDOR=xiaomi
 MY_DIR="${BASH_SOURCE%/*}"
 if [[ ! -d "${MY_DIR}" ]]; then MY_DIR="${PWD}"; fi
 
-DERP_ROOT="${MY_DIR}/../../.."
+LINEAGE_ROOT="${MY_DIR}/../../.."
 
-HELPER="${DERP_ROOT}/tools/extract-utils/extract_utils.sh"
+HELPER="${LINEAGE_ROOT}/tools/extract-utils/extract_utils.sh"
 if [ ! -f "${HELPER}" ]; then
     echo "Unable to find helper script at ${HELPER}"
     exit 1
@@ -71,7 +71,7 @@ if [ -z "${SRC}" ]; then
 fi
 
 # Initialize the helper
-setup_vendor "${DEVICE}" "${VENDOR}" "${DERP_ROOT}" false "${CLEAN_VENDOR}"
+setup_vendor "${DEVICE}" "${VENDOR}" "${LINEAGE_ROOT}" false "${CLEAN_VENDOR}"
 
 extract "${MY_DIR}"/proprietary-files.txt "${SRC}" \
         "${KANG}" --section "${SECTION}"
@@ -81,6 +81,12 @@ function blob_fixup() {
 
 	product/lib64/libdpmframework.so)
 	    "${PATCHELF}" --add-needed libdpmframework_shim.so "${2}"
+	;;
+	vendor/lib/hw/camera.msm8953.so)
+	    "${PATCHELF}" --remove-needed "libandroid.so" "${2}"
+	;;
+        vendor/lib/libFaceGrade.so)
+	    "${PATCHELF}" --remove-needed "libandroid.so" "${2}"
 	;;
 	vendor/etc/init/android.hardware.biometrics.fingerprint@2.1-service.rc)
 	    sed -i 's/fps_hal/vendor.fps_hal/' "${2}"
@@ -105,7 +111,7 @@ function blob_fixup() {
 
 }
 
-DEVICE_BLOB_ROOT="${DERP_ROOT}"/vendor/"${VENDOR}"/"${DEVICE}"/proprietary
+DEVICE_BLOB_ROOT="${LINEAGE_ROOT}"/vendor/"${VENDOR}"/"${DEVICE}"/proprietary
 
 # Camera configs
 sed -i "s|/system/etc/camera|/vendor/etc/camera|g" "${DEVICE_BLOB_ROOT}"/vendor/lib/libmmcamera2_sensor_modules.so
